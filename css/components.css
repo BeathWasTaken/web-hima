@@ -1,0 +1,286 @@
+/* Same treatment for game detail modal: backdrop overflow + inner card body
+   that scrolls when content is long. Keeps the look clean across engines. */
+#game-modal,
+#game-modal .overflow-y-auto {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+#game-modal::-webkit-scrollbar,
+#game-modal .overflow-y-auto::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+}
+.shimmer {
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+.glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); }
+
+/* Active page indicator on navbar links */
+.nav-link {
+    color: #64748b;        /* slate-500 default */
+}
+.nav-link:hover {
+    background-color: #f1f5f9;     /* slate-100 */
+    color: #4f46e5;
+}
+.nav-link.is-active {
+    color: #ffffff;
+    background-color: #4f46e5;     /* indigo-600 pill */
+    box-shadow: 0 6px 16px -8px rgba(79, 70, 229, 0.55);
+}
+.nav-link.is-active:hover {
+    background-color: #4338ca;     /* indigo-700 */
+    color: #ffffff;
+}
+
+/* Active state for the profile pill in the navbar (when on /profile page).
+   A subtle indigo gradient + ring + animated dot indicator next to the avatar
+   reads as the current location without overpowering the navbar. */
+#user-info.is-active {
+    background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
+    border-color: #c7d2fe;          /* indigo-200 */
+    box-shadow: 0 4px 14px -4px rgba(79, 70, 229, 0.25);
+}
+#user-info.is-active #user-avatar {
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #4f46e5;
+}
+#user-info.is-active #user-name {
+    color: #4338ca;
+}
+/* Tiny animated status dot that appears on the avatar when active */
+#user-info.is-active #nav-profile {
+    position: relative;
+}
+#user-info.is-active #nav-profile::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: 24px;
+    width: 10px;
+    height: 10px;
+    border-radius: 9999px;
+    background-color: #10b981;       /* emerald-500 */
+    box-shadow: 0 0 0 2px #ffffff;
+    animation: profilePulse 1.6s ease-in-out infinite;
+    z-index: 2;
+}
+
+/* ---------- Skeleton image loader ----------
+ * Wrap an <img> inside a `.img-skel` element. The element gets the same
+ * shape (rounded corners, sizing) and shows a shimmer until the image fully
+ * loads. If the image fails (404, broken URL, no src), the shimmer stays.
+ */
+.img-skel {
+    position: relative;
+    overflow: hidden;
+    background: #f3f4f6;
+}
+.img-skel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+.img-skel.is-loaded::before { opacity: 0; pointer-events: none; }
+
+.img-skel > img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    position: relative;
+    z-index: 2;
+}
+.img-skel.is-loaded > img { opacity: 1; }
+.img-skel.is-failed > img { opacity: 0; visibility: hidden; }
+
+#app-modal:not(.hidden) { animation: appModalBackdropIn 0.2s ease-out; }
+#app-modal:not(.hidden) #app-modal-card { animation: appModalIn 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Active state for the admin sidebar buttons */
+.admin-nav.is-active {
+    background-color: #4f46e5;        /* indigo-600 */
+    border-color: #4f46e5;
+    color: #ffffff;
+    box-shadow: 0 10px 25px -10px rgba(79, 70, 229, 0.45);
+}
+.admin-nav.is-active:hover {
+    background-color: #4338ca;        /* indigo-700 */
+    border-color: #4338ca;
+}
+/* Active state: lift the icon container too so it doesn't look stranded */
+.admin-nav.is-active .admin-nav-icon {
+    background-color: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+}
+/* Hover (non-active): tinted icon background follows the indigo accent */
+.admin-nav:not(.is-active):hover .admin-nav-icon {
+    background-color: #eef2ff;        /* indigo-50 */
+    color: #4f46e5;
+}
+.admin-nav-icon {
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ---------- Scroll reveal: fade-in + slide-up sebagai user scroll ---------- */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+}
+.reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Article body styling for the news detail page. Paragraphs separated by
+   blank lines in the admin textarea become spaced <p> blocks. */
+.prose-news p {
+    margin: 0;
+}
+.prose-news p + p {
+    margin-top: 1.1em;
+}
+.prose-news strong { font-weight: 700; color: #0f172a; }
+
+/* Hero typing animation. The headline reserves its full final layout up front
+   by rendering a "ghost" copy that takes space but stays invisible. Characters
+   then transfer from `.hero-ghost` into `.hero-typed` one at a time, so the
+   visible word grows without ever shifting the page. */
+.hero-typed {
+    display: inline;
+    white-space: pre-wrap;          /* keep collapsed spaces, allow wrapping */
+}
+.hero-ghost {
+    display: inline;
+    white-space: pre-wrap;
+    visibility: hidden;             /* takes layout space but is not painted */
+}
+@media (prefers-reduced-motion: reduce) {
+    /* Skip the animation entirely: show full text, hide the layout reservation. */
+    .hero-ghost { display: none; }
+}
+
+/* Smooth blinking caret rendered after the hero headline. Pure CSS pulse.
+   While typing, the caret is rendered as an invisible placeholder so it
+   already reserves its layout space — the typing-complete state then just
+   toggles visibility, with zero size change. */
+.type-caret {
+    display: inline-block;
+    width: 0.06em;
+    margin-left: 0.12em;
+    background-color: currentColor;
+    border-radius: 1px;
+    height: 0.95em;
+    vertical-align: -0.15em;
+    animation: typeCaretPulse 1.1s ease-in-out infinite;
+}
+.type-caret.is-pending {
+    /* Reserves space without painting + without animating until typing ends. */
+    visibility: hidden;
+    animation: none;
+}
+
+#mobile-menu:not(.hidden) > div:first-child { animation: mobileMenuBackdropIn 0.2s ease-out; }
+#mobile-menu:not(.hidden) > div:last-child { animation: mobileMenuSlideIn 0.28s cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* Active state for mobile drawer items */
+.mobile-nav-link.is-active {
+    background-color: #4f46e5;
+    color: #ffffff;
+}
+.mobile-nav-link.is-active:hover {
+    background-color: #4338ca;
+    color: #ffffff;
+}
+
+/* ---------- Game screenshot dropzone ---------- */
+.screenshot-dropzone {
+    border: 2px dashed #cbd5e1;       /* slate-300 */
+    background: #ffffff;
+    transition: border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
+}
+.screenshot-dropzone:hover {
+    border-color: #94a3b8;             /* slate-400 */
+    background: #f8fafc;
+}
+.screenshot-dropzone.is-dragover {
+    border-color: #4f46e5;             /* indigo-600 */
+    background: #eef2ff;               /* indigo-50 */
+    transform: scale(1.01);
+}
+.screenshot-thumb {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    background: #f1f5f9;
+}
+.screenshot-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.screenshot-thumb .remove-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 22px;
+    height: 22px;
+    border-radius: 9999px;
+    background: rgba(15, 23, 42, 0.78);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+.screenshot-thumb:hover .remove-btn {
+    opacity: 1;
+}
+.screenshot-thumb .order-badge {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    background: rgba(15, 23, 42, 0.78);
+    color: #ffffff;
+    letter-spacing: 0.05em;
+}
+
+/* ---------- Hide scrollbars on horizontal-scroll carousels ---------- */
+/* Used on Games page sections (Editor's Pick, Top Charts, Categories,
+   per-category rows). Visual cue is provided by snap-scroll + arrow nav,
+   not by an intrusive scrollbar. */
+.hscroll {
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* IE / old Edge */
+}
+.hscroll::-webkit-scrollbar {
+    display: none;                /* Chromium, Safari */
+    width: 0;
+    height: 0;
+}
+
+.section-rise { animation: sectionRise 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+
+.section-glow { animation: sectionGlow 1.2s ease-out; border-radius: 2.5rem; }

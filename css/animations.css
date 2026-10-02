@@ -1,0 +1,46 @@
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@keyframes profilePulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 2px #ffffff, 0 0 0 0 rgba(16, 185, 129, 0.55); }
+    50%      { transform: scale(1.15); box-shadow: 0 0 0 2px #ffffff, 0 0 0 5px rgba(16, 185, 129, 0); }
+}
+
+/* ---------- App modal animations ---------- */
+@keyframes appModalIn {
+    from { opacity: 0; transform: translateY(8px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes appModalBackdropIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes typeCaretPulse {
+    0%, 100% { opacity: 1; }
+    50%      { opacity: 0; }
+}
+
+/* ---------- Mobile menu drawer animations ---------- */
+@keyframes mobileMenuBackdropIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+@keyframes mobileMenuSlideIn {
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
+}
+
+/* Section reveal — used when navigating from footer/navbar links */
+@keyframes sectionRise {
+    0%   { opacity: 0; transform: translateY(40px); }
+    60%  { opacity: 1; }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Soft glow ring while section is the active scroll target */
+@keyframes sectionGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+    50%      { box-shadow: 0 0 0 6px rgba(79, 70, 229, 0.12); }
+}
